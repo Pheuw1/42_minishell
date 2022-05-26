@@ -64,3 +64,17 @@ void	ft_putstr_fd(char *str, int fd)
 {
 	write(fd, str, ft_strlen(str));
 }
+
+
+int		ft_clstize(t_cmd *cmds)
+{
+	int	i;
+
+	i = 0;
+	while(cmds)
+	{
+		cmds = cmds->next;
+		i++;
+	}
+	return (i);
+}

@@ -32,12 +32,12 @@ void here_doc(char *delimiter, int fdin, int fdout)
     char    *file;
     char    *tmp;
     int     r;
-    
+
     r = 0;
     file = NULL;
 	delimiter = ft_strjoin(delimiter,"\n");
     while (ft_strcmp(delimiter, buffer)) {
-        write(1,"> ",2);
+        write(fdout,"> ",2);
         while (!ft_strnstr(buffer, "\n", ft_strlen(buffer))) {
 			ft_memset((void *)buffer, 0, r);
             r = read(fdin, buffer, 1024);
@@ -62,11 +62,11 @@ int		open_in(t_cmd *cmd, int fd_to)
 
 	i = 0;
 	fd_in = -1;
-	while (cmd->in[i] || cmd->t_in[i])
+	while ((cmd->in && cmd->in[i]) || (cmd->t_in && cmd->t_in[i]))
 	{	
 		if (fd_in > 0)
 			close(fd_in);
-		if (cmd->t_in[i])
+		if (cmd->t_in && cmd->t_in[i])
 		{
 			fd_in = -1;
 			here_doc(cmd->in[i], STDIN, fd_to);
@@ -77,6 +77,7 @@ int		open_in(t_cmd *cmd, int fd_to)
 			return (ft_error("minishell", cmd->in[i], "No such file or directory", -1));
 		else
 			dup2(fd_in, fd_to);
+		i++;
 	}
 	return (0);
 }
@@ -88,7 +89,7 @@ int		open_out(t_cmd *cmd, int fd_to)
 
 	i = 0;
 	fd_out = -1;
-	while (cmd->out[i] || cmd->t_out[i])
+	while ( (cmd->out && cmd->out[i]) ||  (cmd->t_out && cmd->t_out[i]))
 	{	
 		if (fd_out > 0)
 			close(fd_out);

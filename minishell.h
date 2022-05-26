@@ -43,7 +43,6 @@
 # define DQUOTE 10
 # define QUOTE 11
 # define INF 2000000000
-
 //garbage node
 typedef struct s_node {
 	void			*elem;
@@ -54,6 +53,10 @@ typedef struct s_mini {
     int		ret;
 	t_node	*garbage;
 	char	**env;
+	int		exit;
+	int		fd_in;
+	int		fd_out;
+	int		sig;
 } t_mini;
 
 typedef struct s_token {
@@ -82,6 +85,7 @@ int		open_out(t_cmd *cmd, int fd_to);
 int		execute(t_cmd *cmds, char **env);
 
 //builtin
+int ft_exit(char **av);
 int ft_cd(char **av);
 int ft_env(char **env);
 int	ft_export(char **args, char **env);
@@ -138,5 +142,6 @@ char	**ft_strs_cpy(char **strs);
 int		ft_strslen(char **strs);
 void	ft_strs_print(char **strs);
 char	**strs_append(char **strs, char *s);
+int		ft_clstize(t_cmd *cmds);
 
 #endif

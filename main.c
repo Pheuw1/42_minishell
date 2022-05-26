@@ -26,14 +26,16 @@ void	init_mini(void)
 //doit quitter les commandes en cours (executer quand ctrl-c est press)
 void	ctrl_c(int sig)
 {
-	printf("ctrl-C\n");
-	sig += 1;
+	ft_putstr_fd("\n", 2);
+	g_mini.sig = sig;
+	g_mini.ret = 130;
 }
 
-void	do_nothing(int sig)
+void	ctrl_backslash(int sig)
 {
-	printf("ctrl-\\");
-	sig += 1;
+	ft_putstr_fd("Quit \n", 2);
+	g_mini.sig = sig;
+	g_mini.ret = 131;
 }
 
 //here to instant free readline :)
@@ -55,28 +57,27 @@ int	main(int ac, char **av, char **d_env)
 
 	ac += 1;
 	av += 1;
-	signal(SIGINT, ctrl_c);
-	signal(SIGQUIT, do_nothing);
+	//signal(SIGINT, ctrl_c);
+	//signal(SIGQUIT, ctrl_backslash);
 	g_mini.env = ft_strs_cpy(d_env);
-	//ft_strs_print(mini.env); //print env
-	while (1)
+	while (!g_mini.exit)
 	{
 		s = ft_readline("\033[34;1;4mminishell$>\033[0m ");
 		if (!s)// <=> ctrl-D
-			exit(g_mini.ret);
-	 	 
-		//ft_putstr_fd("here\n",2); 
-		if (*s)
 		{
-			// add_history(s);
+			g_mini.sig = SIGQUIT;
+			g_mini.ret = 131;
+			ft_exit(NULL);
+	 	} 
+		if (s && *s)
+		{
+			add_history(s);
 			s = expand(s);           
 			if (!s)   
 				continue ;
-			ft_putstr_fd("here\n",2);
 			cmds = parse(s);
-			if (cmds) 
-				print_cmds(cmds);
-			ft_putstr_fd("here\n",2);
+			// if (cmds) 
+			// 	print_cmds(cmds);
 			execute(cmds, g_mini.env);
 		}
 	}
