@@ -1,5 +1,6 @@
 #include "../minishell.h"
 
+<<<<<<< HEAD
 char *get_name(char *val)
 {
     if (ft_strchr(val, '='))
@@ -8,6 +9,8 @@ char *get_name(char *val)
 }
 
 
+=======
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 char **remove_from_strarr(char **strings, int idx)
 {
     int n;
@@ -35,6 +38,7 @@ int driver_unset(char **env, char *name)
 
     i = 0;
     while (env[++i])
+<<<<<<< HEAD
     {
         if (!ft_strcmp(name, get_name(env[i])))
         {
@@ -43,6 +47,10 @@ int driver_unset(char **env, char *name)
             return (1);
         }
     }
+=======
+        if (!ft_strncmp(env[i], name, ft_strichr(env[i], '=')))
+            env = remove_from_strarr(env, i);
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
     return (0);
 }
 

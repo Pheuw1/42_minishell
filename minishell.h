@@ -43,6 +43,10 @@
 # define DQUOTE 10
 # define QUOTE 11
 # define INF 2000000000
+<<<<<<< HEAD
+=======
+
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 //garbage node
 typedef struct s_node {
 	void			*elem;
@@ -53,10 +57,13 @@ typedef struct s_mini {
     int		ret;
 	t_node	*garbage;
 	char	**env;
+<<<<<<< HEAD
 	int		exit;
 	int		fd_in;
 	int		fd_out;
 	int		sig;
+=======
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 } t_mini;
 
 typedef struct s_token {
@@ -80,11 +87,16 @@ t_mini	g_mini;
 //--------------------
 
 //execution
+<<<<<<< HEAD
 int		open_in(t_cmd *cmd);
+=======
+int		open_in(t_cmd *cmd, int fd_to);
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 int		open_out(t_cmd *cmd, int fd_to);
 int		execute(t_cmd *cmds, char **env);
 
 //builtin
+<<<<<<< HEAD
 int		ft_exit(char **av, int silent);
 int		ft_cd(char **av);
 int		ft_env(char **env);
@@ -94,6 +106,15 @@ int		ft_echo(char **av);
 int		ft_unset(char **av, char **env);
 int		driver_unset(char **env, char *name);
 char	*get_name(char *val);
+=======
+int ft_cd(char **av);
+int ft_env(char **env);
+int	ft_export(char **args, char **env);
+int ft_pwd();
+int ft_echo(char **av);
+int ft_unset(char **av, char **env);
+int driver_unset(char **env, char *name);
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 
 //env
 int		shell_env(char **def_env);
@@ -143,6 +164,9 @@ char	**ft_strs_cpy(char **strs);
 int		ft_strslen(char **strs);
 void	ft_strs_print(char **strs);
 char	**strs_append(char **strs, char *s);
+<<<<<<< HEAD
 int		ft_clstize(t_cmd *cmds);
+=======
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 
 #endif

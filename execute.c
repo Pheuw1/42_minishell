@@ -40,6 +40,7 @@ char *bin_path(char *cmd, char **env)
 	return (NULL);
 }
 
+<<<<<<< HEAD
 int exec_builtin(char **argv)
 {
 	int ret;
@@ -91,28 +92,66 @@ int     exec(t_cmd *cmd, char **env)
 		g_mini.ret = built_in;
 		return (1);
 	}
+=======
+int is_builtin(char **argv)
+{
+	if (!ft_strncmp(argv[0], "echo", 4))
+		ft_echo(argv);
+	else if (!ft_strncmp(argv[0], "unset", 5))
+		ft_unset(argv, g_mini.env);
+	else if (!ft_strncmp(argv[0], "export", 6))
+		ft_export(argv, g_mini.env);
+	else if (!ft_strncmp(argv[0], "cd", 2))
+		ft_cd(argv);
+	else if (!ft_strncmp(argv[0], "pwd", 3))
+		ft_pwd();
+	else if (!ft_strncmp(argv[0], "env", 3))
+		ft_env(g_mini.env);
+	else
+		return (0);
+	return (1);
+}
+
+int     exec(t_cmd *cmd, char **env)
+{
+	char	*path;
+
+	if (is_builtin(cmd->arg))
+		return (0);
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 	if (ft_strchr(cmd->arg[0], '/'))
 		path = cmd->arg[0];
 	else
     	path = bin_path(cmd->arg[0], env);
 	if (!path)
+<<<<<<< HEAD
 		return (ft_error("access", cmd->arg[0], "couldn't find path to executable", -1));
 	if (execve(path, cmd->arg, env) == -1)
         return (ft_error("execve",NULL, "couldnt execute command", -1));
 	return (0);
+=======
+		return (ft_error("access",NULL, "couldn't find path to executable", -1));
+	if (execve(path, cmd->arg, env) == -1)
+        return (ft_error("execve",NULL, "couldnt execute command", -1));
+    return (0);
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 }
 
 void	fork_program(t_cmd *cmd, char **env)
 {
 	pid_t	pid;
 	int		pipefd[2];
+<<<<<<< HEAD
 	char 	*tmp[10000];
+=======
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 
 	pipe(pipefd);
 	pid = fork();
 	if (pid)
 	{
 		close(pipefd[1]);
+<<<<<<< HEAD
 		if (g_mini.fd_in > 0)
 			close(g_mini.fd_in);  
 		exec_builtin(cmd->arg);
@@ -145,6 +184,26 @@ int execute(t_cmd *cmds, char **env)
 	g_mini.fd_out  = -1;	
 	while (cmds)
 	{
+=======
+		dup2(pipefd[0], 0);
+		waitpid(pid, NULL, 0);
+		status_child(pid);
+	}
+	else
+	{
+		close(pipefd[0]);
+		dup2(pipefd[1], 1);
+		exec(cmd, env);
+	}
+}
+
+int execute(t_cmd *cmds, char **env)
+{
+	while (cmds)
+	{
+		open_in(cmds, STDIN);
+		open_out(cmds, STDOUT);
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 		fork_program(cmds, env);
 		cmds = cmds->next;
 	}

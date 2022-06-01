@@ -3,14 +3,20 @@
 
 void update_env_pwd(char **env, char *new_pwd)
 {
+<<<<<<< HEAD
     char *args_pwd[3];
     char *args_oldpwd[3];
+=======
+    char *args_pwd[2];
+    char *args_oldpwd[2];
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
     int i;
 
     i = -1;
     while (env[++i])
         if (!ft_strncmp("PWD", env[i], 3))
             break ;
+<<<<<<< HEAD
     driver_unset(env, "OLDPWD");
     driver_unset(env, "PWD");
     args_oldpwd[0] = "export";
@@ -19,6 +25,14 @@ void update_env_pwd(char **env, char *new_pwd)
     args_pwd[0] = "export"; 
     args_pwd[1] = ft_strjoin("PWD=", new_pwd);
     args_pwd[2] = NULL;
+=======
+    args_oldpwd[0] = env[i];
+    args_oldpwd[1] = NULL;
+    driver_unset(env, "OLDPWD");
+    driver_unset(env, "PWD");
+    args_pwd[0] = new_pwd;
+    args_pwd[1] = NULL;
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
     ft_export(args_pwd, env);
     ft_export(args_oldpwd , env);
 }
@@ -55,9 +69,17 @@ int ft_cd(char **av)
     char *msg;
 
     if (ft_strarrsize(av) > 2)
+<<<<<<< HEAD
         return (ft_error("minishell : cd", 0, "too many arguments", 1));
     if (ft_strarrsize(av) == 2)
         if (driver_cd(av[1]))
             return (ft_error("minishell : cd", av[1], "No such file or directory", 1));
+=======
+        write(2, "minishell :", 12);
+        return (ft_error("minishell : cd", 0, "too many arguments", -1));
+    if (ft_strarrsize(av) == 2)
+        if (!driver_cd(av[1]))
+            return (ft_error("minishell : cd", av[1], "No such file or directory", -1));
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
     return (0);
 }

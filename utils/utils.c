@@ -64,6 +64,7 @@ void	ft_putstr_fd(char *str, int fd)
 {
 	write(fd, str, ft_strlen(str));
 }
+<<<<<<< HEAD
 
 
 int		ft_clstize(t_cmd *cmds)
@@ -78,3 +79,5 @@ int		ft_clstize(t_cmd *cmds)
 	}
 	return (i);
 }
+=======
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5

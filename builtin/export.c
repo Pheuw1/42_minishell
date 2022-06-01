@@ -8,12 +8,20 @@ char **add_to_strarr(char **strings, char *s)
 	i = 0;
 	while (strings[i])
 		i++;
+<<<<<<< HEAD
 	ret = (char **)ft_malloc((i + 2) * sizeof(char *));
+=======
+	ret = (char **)malloc((i + 2) * sizeof(char *));
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 	i = -1;
 	while (strings[++i])
 		ret[i] = ft_strdup(strings[i]);
 	ret[i] = ft_strdup(s);
 	ret[i + 1] = NULL; 
+<<<<<<< HEAD
+=======
+	ft_freestrarr(strings);
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 	return (ret);
 }
 
@@ -24,11 +32,17 @@ int		is_valid_env(const char *var)
 	if (ft_isdigit(var[i]))
 		return (0);
 	i = -1;
+<<<<<<< HEAD
 	while (var[++i] && var[i] != '=') 
 		if (!ft_isalnum(var[i]) && var[i] != '_')
 			return (0);
 	if (i < 1)
 		return (0);
+=======
+	while (var[++i]) 
+		if (!ft_isalnum(var[i]) || var[i] != '_')
+			return (0);
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 	return (1);
 }
 
@@ -54,6 +68,7 @@ void print_sorted_env(char **env)
 	i = 0;
 	while (dup[i])
 	{
+<<<<<<< HEAD
 		j = 0;
 		if (ft_strncmp("_", dup[i], ft_strichr(dup[i],'=')))
 		{	
@@ -70,6 +85,18 @@ void print_sorted_env(char **env)
 		i++;
 	}
 	ft_freestrarr(dup);
+=======
+		ft_printf("declare -x ");
+		if (!ft_strchr(dup[i], '='))	
+			ft_printf("%s", dup[i]);
+		else
+		{
+			while (dup[i][j] && dup[i][j] != '=')
+				ft_printf("%c", dup[i][j]);
+			ft_printf("\"%s\"", ft_strchr(dup[i], '='));
+		}
+	}
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 }
 
 int			ft_export(char **args, char **env)
@@ -86,11 +113,22 @@ int			ft_export(char **args, char **env)
 			if (is_valid_env(args[i]))
 			{
 				j = 0;
+<<<<<<< HEAD
 				driver_unset(env, args[i]);
 				g_mini.env = add_to_strarr(env, args[i]);
 			}
 			else
 				return (ft_error("bash: export", args[i], "not a valid identifier", -1));
+=======
+				while (env[++j])
+					if (!ft_strncmp(args[i], env[j], ft_strichr(env[i], '=')))
+						driver_unset(env, args[i]);
+				add_to_strarr(env, args[i]);
+			}
+			else
+				ft_error("bash: export", args[i], "not a valid identifier", 0);
+
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 		}
 	return (0);
 }

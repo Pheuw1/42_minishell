@@ -87,5 +87,8 @@ int		ft_strichr(char *string, int c);
 int		ft_strarrlen(char **strings);
 int		ft_strarrsize(char **strings);
 signed long long   ft_atol(const char *str);
+<<<<<<< HEAD
 void	*ft_malloc(int size);
+=======
+>>>>>>> 505d58a9ab97bf70864f107bd619556ef73927c5
 #endif
