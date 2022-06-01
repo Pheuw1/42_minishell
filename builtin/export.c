@@ -8,13 +8,12 @@ char **add_to_strarr(char **strings, char *s)
 	i = 0;
 	while (strings[i])
 		i++;
-	ret = (char **)malloc((i + 2) * sizeof(char *));
+	ret = (char **)ft_malloc((i + 2) * sizeof(char *));
 	i = -1;
 	while (strings[++i])
 		ret[i] = ft_strdup(strings[i]);
 	ret[i] = ft_strdup(s);
 	ret[i + 1] = NULL; 
-	ft_freestrarr(strings);
 	return (ret);
 }
 
@@ -25,9 +24,11 @@ int		is_valid_env(const char *var)
 	if (ft_isdigit(var[i]))
 		return (0);
 	i = -1;
-	while (var[++i]) 
-		if (!ft_isalnum(var[i]) || var[i] != '_')
+	while (var[++i] && var[i] != '=') 
+		if (!ft_isalnum(var[i]) && var[i] != '_')
 			return (0);
+	if (i < 1)
+		return (0);
 	return (1);
 }
 
@@ -53,16 +54,22 @@ void print_sorted_env(char **env)
 	i = 0;
 	while (dup[i])
 	{
-		ft_printf("declare -x ");
-		if (!ft_strchr(dup[i], '='))	
-			ft_printf("%s", dup[i]);
-		else
-		{
+		j = 0;
+		if (ft_strncmp("_", dup[i], ft_strichr(dup[i],'=')))
+		{	
+			ft_printf("declare -x ");
 			while (dup[i][j] && dup[i][j] != '=')
-				ft_printf("%c", dup[i][j]);
-			ft_printf("\"%s\"", ft_strchr(dup[i], '='));
+				ft_printf("%c", dup[i][j++]);
+			if (ft_strchr(dup[i], '='))
+			{
+				ft_printf("=");
+				ft_printf("\"%s\"", ft_strchr(dup[i], '=') + 1);
+			}
+			ft_printf("\n");
 		}
+		i++;
 	}
+	ft_freestrarr(dup);
 }
 
 int			ft_export(char **args, char **env)
@@ -79,14 +86,11 @@ int			ft_export(char **args, char **env)
 			if (is_valid_env(args[i]))
 			{
 				j = 0;
-				while (env[++j])
-					if (!ft_strncmp(args[i], env[j], ft_strichr(env[i], '=')))
-						driver_unset(env, args[i]);
-				add_to_strarr(env, args[i]);
+				driver_unset(env, args[i]);
+				g_mini.env = add_to_strarr(env, args[i]);
 			}
 			else
-				ft_error("bash: export", args[i], "not a valid identifier", 0);
-
+				return (ft_error("bash: export", args[i], "not a valid identifier", -1));
 		}
 	return (0);
 }

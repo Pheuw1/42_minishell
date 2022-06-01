@@ -1,8 +1,9 @@
 #include "../minishell.h"
 
-int	ft_exit(char **argv)
+int	ft_exit(char **argv, int silent)
 {
-	ft_putstr_fd("exit\n", 1);
+	if (!silent)
+		ft_putstr_fd("exit\n", 1);
 	if (ft_strarrsize(argv) > 2)
 	{
 		g_mini.ret = 1;
@@ -20,6 +21,8 @@ int	ft_exit(char **argv)
 		else
 			g_mini.ret = 0;
 		g_mini.exit = 1;
+		exit(1);
 	}
-	
+	g_clear("");
+	return (g_mini.ret);
 }

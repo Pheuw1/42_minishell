@@ -1,5 +1,13 @@
 #include "../minishell.h"
 
+char *get_name(char *val)
+{
+    if (ft_strchr(val, '='))
+        return(ft_substr(val, 0, ft_strichr(val, '=')));
+    return (val);
+}
+
+
 char **remove_from_strarr(char **strings, int idx)
 {
     int n;
@@ -27,8 +35,14 @@ int driver_unset(char **env, char *name)
 
     i = 0;
     while (env[++i])
-        if (!ft_strncmp(env[i], name, ft_strichr(env[i], '=')))
-            env = remove_from_strarr(env, i);
+    {
+        if (!ft_strcmp(name, get_name(env[i])))
+        {
+            ft_printf("!FOUND!\n");
+            g_mini.env = remove_from_strarr(env, i);
+            return (1);
+        }
+    }
     return (0);
 }
 

@@ -40,13 +40,13 @@ char *bin_path(char *cmd, char **env)
 	return (NULL);
 }
 
-int is_builtin(char **argv)
+int exec_builtin(char **argv)
 {
 	int ret;
 
 	ret = -255;
 	if (!ft_strcmp(argv[0], "echo"))
-		ret = ft_echo(argv);
+		ret = ft_echo(argv);	
 	else if (!ft_strcmp(argv[0], "unset"))
 		ret = ft_unset(argv, g_mini.env);
 	else if (!ft_strcmp(argv[0], "export"))
@@ -58,12 +58,28 @@ int is_builtin(char **argv)
 	else if (!ft_strcmp(argv[0], "env"))
 		ret = ft_env(g_mini.env);
 	else if (!ft_strcmp(argv[0], "exit"))
-		ret = ft_exit(argv);
+		ret = ft_exit(argv, 0);
+	else if ((!ft_strcmp(argv[0], "env")))
+		ret = ft_env(g_mini.env);
 	else	
 		return (ret);
 	return (ret);
 }
 
+
+int is_builtin(char **argv)
+{
+	if ((!ft_strcmp(argv[0], "echo"))
+		|| (!ft_strcmp(argv[0], "unset"))
+		|| (!ft_strcmp(argv[0], "export"))
+		|| (!ft_strcmp(argv[0], "cd"))
+		|| (!ft_strcmp(argv[0], "pwd"))
+		|| (!ft_strcmp(argv[0], "env"))
+		|| (!ft_strcmp(argv[0], "exit"))
+		|| (!ft_strcmp(argv[0], "env")))
+		return (1);
+	return (0);
+}
 int     exec(t_cmd *cmd, char **env)
 {
 	char	*path;
@@ -73,7 +89,7 @@ int     exec(t_cmd *cmd, char **env)
 	if (built_in != -255)
 	{
 		g_mini.ret = built_in;
-		exit(0);
+		return (1);
 	}
 	if (ft_strchr(cmd->arg[0], '/'))
 		path = cmd->arg[0];
@@ -90,6 +106,7 @@ void	fork_program(t_cmd *cmd, char **env)
 {
 	pid_t	pid;
 	int		pipefd[2];
+	char 	*tmp[10000];
 
 	pipe(pipefd);
 	pid = fork();
@@ -97,22 +114,28 @@ void	fork_program(t_cmd *cmd, char **env)
 	{
 		close(pipefd[1]);
 		if (g_mini.fd_in > 0)
-			close(g_mini.fd_in);     
+			close(g_mini.fd_in);  
+		exec_builtin(cmd->arg);
 		waitpid(pid, &g_mini.ret, 0);
 		status_child(pid);
 		if (g_mini.sig == SIGINT || g_mini.sig == SIGQUIT)	
 			return ;
-		//g_mini.fd_in = 	dup(pipefd[0]);
 		g_mini.fd_in = pipefd[0];
-		//g_mini.fd_out = dup(pipefd[1]);
 	}
 	else 
 	{
-		if (g_mini.fd_in > 0)
+		if (!cmd->in && g_mini.fd_in > 0)
 			dup2(g_mini.fd_in , STDIN);//last out onto current in
-		if (cmd->next)               
-			dup2(pipefd[1], 1);
-		exec(cmd, env); 
+		if ((cmd->in && open_in(cmd) == -1) || (cmd->out && open_out(cmd, STDOUT) == -1))
+			exit(1);
+		if (cmd->next)
+			dup2(pipefd[1], STDOUT);
+		if (is_builtin(cmd->arg))
+			exit(0);
+		else if (exec(cmd, env))
+			exit(1);
+		close(pipefd[0]);
+		g_clear("");
 	}
 }	
 
@@ -122,8 +145,6 @@ int execute(t_cmd *cmds, char **env)
 	g_mini.fd_out  = -1;	
 	while (cmds)
 	{
-		if (open_in(cmds, STDIN) < 0 || open_out(cmds, STDOUT) < 0)
-			return (-1);
 		fork_program(cmds, env);
 		cmds = cmds->next;
 	}

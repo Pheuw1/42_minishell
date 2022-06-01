@@ -80,19 +80,20 @@ t_mini	g_mini;
 //--------------------
 
 //execution
-int		open_in(t_cmd *cmd, int fd_to);
+int		open_in(t_cmd *cmd);
 int		open_out(t_cmd *cmd, int fd_to);
 int		execute(t_cmd *cmds, char **env);
 
 //builtin
-int ft_exit(char **av);
-int ft_cd(char **av);
-int ft_env(char **env);
-int	ft_export(char **args, char **env);
-int ft_pwd();
-int ft_echo(char **av);
-int ft_unset(char **av, char **env);
-int driver_unset(char **env, char *name);
+int		ft_exit(char **av, int silent);
+int		ft_cd(char **av);
+int		ft_env(char **env);
+int		ft_export(char **args, char **env);
+int		ft_pwd();
+int		ft_echo(char **av);
+int		ft_unset(char **av, char **env);
+int		driver_unset(char **env, char *name);
+char	*get_name(char *val);
 
 //env
 int		shell_env(char **def_env);
