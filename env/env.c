@@ -54,7 +54,7 @@ char	*expand_un_truc(char *s, char *out, int *i)
 	while (s[j] && !is_sep(s[j]) && !is_space(s[j])
 		&& s[j] != '$' && s[j] != '\'' && s[j] != '\"')
 		j++;
-	cur = ft_substr(s, *i + 1, j - *i -1);
+	cur = ft_substr(s, *i + 1, j - *i - 1);
 	if (!ft_strncmp(cur, "?", 1))
 		out = s_append_str(out, ft_itoa(g_mini.ret));
 	else if (!(*cur) && s[j] != '\'' && s[j] != '\"')

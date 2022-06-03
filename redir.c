@@ -18,67 +18,61 @@ int get_path_perm(char *path)
 	}
 }
 
-void ft_clearbuffer(char *buffer)
-{
-    while(*buffer) {
-        *buffer = 0;
-        buffer++;
-    }
-}
-
-void here_doc(char *delimiter, int fdin, int fdout)
+int here_doc(char *dlmtr)
 {
     char    buffer[1024];
     char    *file;
     char    *tmp;
     int     r;
-    
+	int 	pip[2];
+
     r = 0;
     file = NULL;
-	delimiter = ft_strjoin(delimiter,"\n");
-    while (ft_strcmp(delimiter, buffer)) {
-        write(1,"> ",2);
-        while (!ft_strnstr(buffer, "\n", ft_strlen(buffer))) {
+	pipe(pip);
+	while (1)
+	{
+		ft_memset((void *)buffer, 0, r);
+        write(STDOUT,"> ",2);
+        while (!ft_strnstr(buffer, "\n", ft_strlen(buffer)))
+		{
 			ft_memset((void *)buffer, 0, r);
-            r = read(fdin, buffer, 1024);
+			r = read(STDIN, buffer, 1024);
             buffer[r] = 0;
-            if (ft_strcmp(delimiter, buffer))
-                tmp = ft_strjoin(file, buffer);
+            if (ft_strncmp(dlmtr, buffer, ft_strlen(dlmtr)-1))
+				file = ft_strjoin(file, buffer);
             else
-                break;
-            free(file);
-            file = tmp;
+			{
+    			write(pip[1], file, ft_strlen(file));
+				close(pip[1]);
+				return (pip[0]);
+			}
         }
-    }
-    write(fdout, file, ft_strlen(file));
-    free(delimiter);
-    free(file);
+	}
 }
 
-int		open_in(t_cmd *cmd, int fd_to)
+int		open_in(t_cmd *cmd)
 {
     int fd_in;
 	int i;
 
 	i = 0;
 	fd_in = -1;
-	while (cmd->in[i] || cmd->t_in[i])
+	while ((cmd->in && cmd->in[i]))
 	{	
 		if (fd_in > 0)
 			close(fd_in);
-		if (cmd->t_in[i])
-		{
-			fd_in = -1;
-			here_doc(cmd->in[i], STDIN, fd_to);
-		}
+		if (cmd->t_in && cmd->t_in[i])
+			fd_in = here_doc(cmd->in[i]);
 		else
+		{	
 			fd_in = open(cmd->in[i], O_RDONLY, S_IRWXU);
-		if (fd_in < 0)
-			return (ft_error("minishell", cmd->in[i], "No such file or directory", -1));
-		else
-			dup2(fd_in, fd_to);
+			if (fd_in < 0)
+				return (ft_error("minishell", cmd->in[i], "No such file or directory", -1));
+		}
+		dup2(fd_in, STDIN);
+		i++;
 	}
-	return (0);
+	return (fd_in);
 }
 
 int		open_out(t_cmd *cmd, int fd_to)
@@ -88,7 +82,7 @@ int		open_out(t_cmd *cmd, int fd_to)
 
 	i = 0;
 	fd_out = -1;
-	while (cmd->out[i] || cmd->t_out[i])
+	while (cmd->out && cmd->out[i])
 	{	
 		if (fd_out > 0)
 			close(fd_out);
@@ -102,5 +96,5 @@ int		open_out(t_cmd *cmd, int fd_to)
 			dup2(fd_out, fd_to);
 		i++;
 	}
-	return (0);
+	return (fd_out);
 }

@@ -1,23 +1,28 @@
 #include "../minishell.h"
 
+char *get_name(char *val)
+{
+    if (ft_strchr(val, '='))
+        return(ft_substr(val, 0, ft_strichr(val, '=')));
+    return (val);
+}
+
+
 char **remove_from_strarr(char **strings, int idx)
 {
-    int n;
+    int j;
     int i;
     char **ret;
 
-    n = 0;
-    while (strings[n])
-        n++;
-    if (n < idx)
+    if (ft_strarrsize(strings) < idx)
         return (NULL);
-    ret = (char **)ft_malloc((n) * sizeof(char *));
+    ret = (char **)ft_malloc((ft_strarrsize(strings)) * sizeof(char *));
     i = -1;
-    while (++i < n && i != idx)
-            ret[i] = ft_strdup(strings[i]);
-    while (++i < n)
-            ret[i] = ft_strdup(strings[i]);
-    ret[n] = NULL;
+    j = -1;
+    while (++i < ft_strarrsize(strings))
+        if (i != idx)
+            ret[++j] = ft_strdup(strings[i]);
+    ret[j + 1] = NULL;
     return (ret);
 }
 
@@ -25,10 +30,15 @@ int driver_unset(char **env, char *name)
 {
     int i;
 
-    i = 0;
-    while (env[++i])
-        if (!ft_strncmp(env[i], name, ft_strichr(env[i], '=')))
-            env = remove_from_strarr(env, i);
+    i = -1;
+    while (g_mini.env[++i])
+    {
+        if (!ft_strcmp(name, get_name(g_mini.env[i])))
+        {  
+            g_mini.env = remove_from_strarr(g_mini.env, i);
+            return (1);
+        }
+    }
     return (0);
 }
 
@@ -38,7 +48,7 @@ int ft_unset(char **av, char **env)
 
     i = 0;
     while(av[++i])
-        driver_unset(env, av[i]);
+        driver_unset(g_mini.env, av[i]);
     return (0);
 
 }

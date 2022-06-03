@@ -13,14 +13,14 @@ char **ft_sortstrarr(char **strings)
 	i = 0;
 	while (i < n - 1)
 	{
-		j = 0;
-		while (j < n - 1)
+		j =  i;
+		while (j < n)
 		{
-			if (ft_strcmp(strings[j], strings[j + 1]) > 0)
+			if (ft_strcmp(strings[i], strings[j]) > 0)
 			{
-				tmp = strings[j];
-                strings[j] = strings[j + 1];
-                strings[j + 1] = tmp;
+				tmp = strings[i];
+                strings[i] = strings[j];
+                strings[j] = tmp;
 			}
 			j++;
 		}
