@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../minishell.h"
 
 int get_path_perm(char *path)
 {
@@ -38,10 +38,13 @@ int here_doc(char *dlmtr)
 			ft_memset((void *)buffer, 0, r);
 			r = read(STDIN, buffer, 1024);
             buffer[r] = 0;
+			if (!r)
+				return (ft_error("minishell: warning", "here-document delimited by end-of-file, wanted", dlmtr, -2));
             if (ft_strncmp(dlmtr, buffer, ft_strlen(dlmtr)-1))
 				file = ft_strjoin(file, buffer);
             else
 			{
+				file = expand(file);
     			write(pip[1], file, ft_strlen(file));
 				close(pip[1]);
 				return (pip[0]);

@@ -79,7 +79,7 @@ int	is_in_env(char *val)
     i = -1;
     while (g_mini.env[++i])
 	{		
-		if (!ft_strcmp(get_name(g_mini.env[i]), get_name(val)) && ft_printf("YES!\n"))
+		if (!ft_strcmp(get_name(g_mini.env[i]), get_name(val)))
 		{
 			g_mini.env[i] = val;
 			return (1);
@@ -104,7 +104,7 @@ int			ft_export(char **args, char **env)
 			if (is_valid_env(args[i]))
 			{
 				j = 0;
-				if (!is_in_env(args[i]) &&ft_printf("YES!\n") )
+				if (!is_in_env(args[i]))
 					g_mini.env = add_to_strarr(g_mini.env, args[i]);
 			}
 			else
