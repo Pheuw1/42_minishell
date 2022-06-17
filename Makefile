@@ -13,6 +13,10 @@ BUILTINS =  cd.c \
 			export.c \
 			exit.c \
 
+EXEC = 	redir.c \
+		execute.c \
+		child.c \
+
 SRC = main.c \
 	parse/parse.c \
 	parse/token.c \
@@ -24,8 +28,7 @@ SRC = main.c \
 	utils/token_utils.c \
 	utils/parse_utils.c \
 	other/garbage.c \
-	redir.c \
-	execute.c \
+	$(addprefix execute/,$(EXEC))\
 	$(addprefix builtin/,$(BUILTINS))\
 
 
@@ -39,7 +42,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	@$(MAKE) -C ./libft
-	$(CC) ${OBJ} ./libft/libft.a  -lreadline -o $(NAME)
+	$(CC) ${OBJ} -I./ ./libft/libft.a  -lreadline -o $(NAME)
 
 show:
 	@printf "UNAME		: $(UNAME)\n"

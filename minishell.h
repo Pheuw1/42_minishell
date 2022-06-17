@@ -43,6 +43,7 @@
 # define DQUOTE 10
 # define QUOTE 11
 # define INF 2000000000
+
 //garbage node
 typedef struct s_node {
 	void			*elem;
@@ -70,7 +71,7 @@ typedef struct s_cmd {
 	char			**arg;
 	char			**in;
 	char			**out;
-	int				*t_in; // t_in[i] = (in[i] == heredoc)
+	int				*t_in; // t_in[i] = (in[i] == delimiter)
 	int				*t_out; // t_out = 1 <=> out[i] is append, else output
 	struct s_cmd	*next;
 }	t_cmd;
@@ -82,7 +83,10 @@ t_mini	g_mini;
 //execution
 int		open_in(t_cmd *cmd);
 int		open_out(t_cmd *cmd, int fd_to);
-int		execute(t_cmd *cmds, char **env);
+int		execute_cmds(t_cmd *cmds);
+int		status_child(pid_t status);
+int     exec(t_cmd *cmd);
+void	child_process(t_cmd *cmd, int *pipefd);
 
 //builtin
 int		ft_exit(char **av, int silent);

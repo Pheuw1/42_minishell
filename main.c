@@ -14,7 +14,7 @@
 //ctrl-c doesnt give back prompt
 
 //ctrl-d needs to be pressed twice if command wanst found
-#include "minishell.h"	
+#include "minishell.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -39,14 +39,19 @@ char	*ft_readline(char *prompt)
 	return (out);
 }
 
-//doit quitter les commandes en cours (executer quand ctrl-c est press)
+//doit quitter les commandes en cours (executer quand ctrl-	c est press)
 void	ctrl_c(int sig)
 {
-	int p[2];
-
-	pipe(p);
 	g_mini.sig = sig;
 	g_mini.ret = 130;
+	rl_done = 1;
+	rl_already_prompted = 1;
+	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	rl_already_prompted = 1;
+	rl_display_prompt = "";
+	rl_redisplay();
+
 }
 
 void	ctrl_backslash(int sig)
@@ -64,11 +69,13 @@ int	main(int ac, char **av, char **d_env)
 	av += 1;
 	signal(SIGINT, ctrl_c);
 	signal(SIGQUIT, ctrl_backslash);
-	g_mini.env = ft_strs_cpy(d_env);\
+	 // Install the handler
+	g_mini.env = ft_strs_cpy(d_env);
 	g_mini.exit = 0;
 	while (!g_mini.exit)
 	{
 		s = ft_readline("\033[34;1;4mminishell$>\033[0m ");
+		rl_done = 0;
 		if (!s)// <=> ctrl-D
 		{
 			g_mini.sig = SIGQUIT;
@@ -78,18 +85,17 @@ int	main(int ac, char **av, char **d_env)
 		if (s && *s && g_mini.sig != SIGINT && g_mini.sig != SIGQUIT)
 		{
 			add_history(s);
-			s = expand(s);           
-			if (!s)   
+			s = expand(s);
+			if (!s)
 				continue ;
 			cmds = parse(s);
-			if (cmds)
-				print_cmds(cmds);
 			//handle ctrl c somehow
 			//behaviour is different during execution
 			// cant just rewrite prompt
-			execute(cmds, g_mini.env);
+			execute_cmds(cmds);
 		}
 		g_mini.sig = 0;
+		rl_already_prompted = 0;
 	}
 	g_clear("");
 }
