@@ -28,6 +28,7 @@
 # include <sys/stat.h>
 # include <string.h>
 # include <errno.h>
+# include <termios.h>
 # define STDIN 0
 # define STDOUT 1
 # define STDERR 2
@@ -58,6 +59,7 @@ typedef struct s_mini {
 	int		fd_in;
 	int		fd_out;
 	int		sig;
+	int		pid;
 } t_mini;
 
 typedef struct s_token {
@@ -76,6 +78,19 @@ typedef struct s_cmd {
 	struct s_cmd	*next;
 }	t_cmd;
 
+typedef struct s_termcaps
+{
+	struct termios	old_term;	
+	struct termios	new_term;	
+	char			*buffer;
+	char			*keys_on;
+	char			*keys_off;
+	char			*up_arrow;
+	char			*down_arrow;
+	char			*backspace;
+	char			*del_line;
+	char			*set_cursor_begin;
+}				t_termcaps;
 
 t_mini	g_mini;
 //--------------------

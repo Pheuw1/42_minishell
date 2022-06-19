@@ -51,7 +51,7 @@ void	ft_strs_print(char **strs)
 	{
 		while (*strs)
 		{
-			printf("%s ", *strs);
+			printf("|%s |", *strs);
 			strs++;
 		}
 	}

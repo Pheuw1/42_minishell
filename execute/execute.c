@@ -5,23 +5,27 @@ int exec_builtin(char **argv)
 {
 	int ret;
 
+
 	ret = g_mini.ret;
-	if (!ft_strcmp(argv[0], "echo"))
-		ret = ft_echo(argv);	
-	else if (!ft_strcmp(argv[0], "unset"))
-		ret = ft_unset(argv, g_mini.env);
-	else if (!ft_strcmp(argv[0], "export"))
-		ret = ft_export(argv, g_mini.env);
-	else if (!ft_strcmp(argv[0], "cd"))
-		ret = ft_cd(argv);
-	else if (!ft_strcmp(argv[0], "pwd"))
-		ret = ft_pwd();
-	else if (!ft_strcmp(argv[0], "env"))
-		ret = ft_env(g_mini.env);
-	else if (!ft_strcmp(argv[0], "exit"))
-		ret = ft_exit(argv, 0);
-	else if ((!ft_strcmp(argv[0], "env")))
-		ret = ft_env(g_mini.env);
+	if (argv)
+	{		
+		if (!ft_strcmp(argv[0], "echo"))
+			ret = ft_echo(argv);	
+		else if (!ft_strcmp(argv[0], "unset"))
+			ret = ft_unset(argv, g_mini.env);
+		else if (!ft_strcmp(argv[0], "export"))
+			ret = ft_export(argv, g_mini.env);
+		else if (!ft_strcmp(argv[0], "cd"))
+			ret = ft_cd(argv);
+		else if (!ft_strcmp(argv[0], "pwd"))
+			ret = ft_pwd();
+		else if (!ft_strcmp(argv[0], "env"))
+			ret = ft_env(g_mini.env);
+		else if (!ft_strcmp(argv[0], "exit"))
+			ret = ft_exit(argv, 0);
+		else if ((!ft_strcmp(argv[0], "env")))
+			ret = ft_env(g_mini.env);
+	}
 	return (ret);
 }
 

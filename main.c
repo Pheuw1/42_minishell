@@ -23,20 +23,63 @@
 
 void	init_mini(void)
 {
+	char	*term_type;
+
+	if (!isatty(STDIN_FILENO))
+	{	
+		g_clear("");
+		ft_exit(NULL, 1);
+	}
+	// increment_shlvl();
+	// if (tcgetattr(STDIN_FILENO, &termcaps->old_term) == -1)
+	// 	ft_exit(NULL, 1);
+	// term_type = ft_get_env("TERM");
+	// if (tgetent(termcaps->buffer, term_type) <= 0)
+	// 	quit_program(EXIT_FAILURE);
+	// else if (!has_capabilities(termcaps))
+	// 	quit_program(EXIT_FAILURE);
+	free(term_type);
 	g_mini.garbage = NULL;
 	g_mini.env = NULL;
 }
 
-//here to instant free readline :)
-char	*ft_readline(char *prompt)
-{
-	char	*out;
-	char	*t;
+// void	init_termcaps(t_termcaps *termcaps)
+// {
 
-	t = readline(prompt);
-	out = ft_substr(t, 0, ft_strlen(t));
-	free(t);
-	return (out);
+
+// }
+
+//here to instant free readline :)
+char *ft_readline(char *prompt)
+{
+	int		pipefd[2];
+	char	out[5000];//limit for a line is 4096ish
+	char	*t;
+	int 	ret;
+
+	pipe(pipefd);
+	g_mini.pid = fork();
+	if (g_mini.pid)
+	{
+		close(pipefd[1]);
+		ft_bzero(out, 5000);
+		waitpid(g_mini.pid, &ret, 0);
+		if (status_child(ret) == 1)
+			{ft_exit(NULL, 0);}
+		read(pipefd[0], out, 5000);
+	}
+	else 
+	{
+		close(pipefd[0]);
+		signal(SIGINT, SIG_DFL); 
+		t = readline(prompt);
+		if (!t)
+			exit(1);
+		write(pipefd[1], t, ft_strlen(t));
+		free(t);//shouldn;t need to;
+		exit(0);
+	}
+	return ft_substr(out, 0, ft_strlen(out));
 }
 
 //doit quitter les commandes en cours (executer quand ctrl-	c est press)
@@ -44,13 +87,14 @@ void	ctrl_c(int sig)
 {
 	g_mini.sig = sig;
 	g_mini.ret = 130;
-	rl_done = 1;
-	rl_already_prompted = 1;
-	write(1, "\n", 1);
-	rl_replace_line("", 0);
-	rl_already_prompted = 1;
-	rl_display_prompt = "";
-	rl_redisplay();
+	kill(g_mini.pid, 0);
+	waitpid(g_mini.pid, NULL, 0);
+	g_mini.pid = 0;
+	write(1,"\n",1);
+	// rl_on_new_line();
+	// rl_replace_line("", 0);
+	// rl_redisplay();
+	// usleep(5);
 
 }
 
@@ -67,35 +111,33 @@ int	main(int ac, char **av, char **d_env)
 
 	ac += 1;
 	av += 1;
-	signal(SIGINT, ctrl_c);
 	signal(SIGQUIT, ctrl_backslash);
+	signal(SIGINT, ctrl_c);
 	 // Install the handler
 	g_mini.env = ft_strs_cpy(d_env);
 	g_mini.exit = 0;
 	while (!g_mini.exit)
 	{
 		s = ft_readline("\033[34;1;4mminishell$>\033[0m ");
-		rl_done = 0;
+		g_mini.sig = 0;
 		if (!s)// <=> ctrl-D
 		{
 			g_mini.sig = SIGQUIT;
 			g_mini.ret = 131;
-			ft_exit(NULL, 0);
+			exit(0);
 	 	}
 		if (s && *s && g_mini.sig != SIGINT && g_mini.sig != SIGQUIT)
 		{
-			add_history(s);
 			s = expand(s);
 			if (!s)
 				continue ;
 			cmds = parse(s);
-			//handle ctrl c somehow
-			//behaviour is different during execution
-			// cant just rewrite prompt
 			execute_cmds(cmds);
+			add_history(s);
 		}
-		g_mini.sig = 0;
-		rl_already_prompted = 0;
+
 	}
 	g_clear("");
+	rl_clear_history();
+	return (0);
 }
