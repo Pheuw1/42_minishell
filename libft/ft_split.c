@@ -81,7 +81,7 @@ char	**ft_split(char const *s, const char *charset)
 	unsigned int	i;
 
 	nb_strs = ft_get_nb_strs(s, charset);
-	tab = (char **)malloc(sizeof(char *) * (nb_strs + 1));
+	tab = (char **)ft_malloc(sizeof(char *) * (nb_strs + 1));
 	if (!tab)
 		return (NULL);
 	i = 0;
@@ -90,7 +90,7 @@ char	**ft_split(char const *s, const char *charset)
 	while (i < nb_strs)
 	{
 		ft_get_next_str(&next_str, &next_str_len, charset);
-		tab[i] = (char *)malloc(sizeof(char) * (next_str_len + 1));
+		tab[i] = (char *)ft_malloc(sizeof(char) * (next_str_len + 1));
 		if (!tab[i])
 			return (ft_clear_splitted(tab));
 		ft_strlcpy(tab[i], next_str, next_str_len + 1);

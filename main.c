@@ -83,7 +83,15 @@ char *ft_readline(char *prompt)
 	return ft_substr(out, 0, ft_strlen(out));
 }
 
+// void	rl_ctrl_c(int sig)
+// {
+// 	rl_done = 1;
+// 	free(g_mini.rline);
+// 	g_mini.rline = NULL;
+// 	rl_done = 0;
+// }
 //doit quitter les commandes en cours (executer quand ctrl-	c est press)
+
 void	ctrl_c(int sig)
 {
 	g_mini.sig = sig;

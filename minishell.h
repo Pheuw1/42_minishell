@@ -60,6 +60,7 @@ typedef struct s_mini {
 	int		fd_out;
 	int		sig;
 	int		pid;
+	char 	*rline;
 } t_mini;
 
 typedef struct s_token {
