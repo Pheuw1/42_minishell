@@ -55,10 +55,21 @@ int ft_cd(char **av)
 {
     char *msg;
 
-    if (ft_strarrsize(av) > 2)
+    if (ft_strarrsize(av) == 1)
+        driver_cd(get_val_env(g_mini.env, "HOME"));
+    else if (ft_strarrsize(av) > 2)
         return (ft_error("minishell : cd", 0, "too many arguments", 1));
-    if (ft_strarrsize(av) == 2)
-        if (driver_cd(av[1]))
+    else if (ft_strarrsize(av) == 2)
+    {   
+        if (!ft_strcmp(av[1], "-"))
+        {
+            if (get_val_env(g_mini.env, "OLDPWD"))
+                driver_cd(get_val_env(g_mini.env, "OLDPWD"));
+            else
+                return (ft_error("minishell : cd", NULL, "OLDPWD not set", 1));
+        }
+        else if (driver_cd(av[1]))   
             return (ft_error("minishell : cd", av[1], "No such file or directory", 1));
+    }
     return (0);
 }

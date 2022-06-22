@@ -65,7 +65,7 @@ int     exec(t_cmd *cmd)
 
 	if (is_builtin(cmd->arg))
 		return (1);
-	if (ft_strchr(cmd->arg[0], '/'))
+	if (cmd->arg && ft_strchr(cmd->arg[0], '/'))
 		path = cmd->arg[0];
 	else
     	path = bin_path(cmd->arg[0], g_mini.env);

@@ -51,6 +51,8 @@ char	*expand_un_truc(char *s, char *out, int *i)
 	int		j;
 
 	j = *i + 1;
+
+	
 	while (s[j] && !is_sep(s[j]) && !is_space(s[j])
 		&& s[j] != '$' && s[j] != '\'' && s[j] != '\"')
 		j++;
@@ -76,12 +78,17 @@ char	*expand(char *s)
 	i = -1;
 	while (s[++i])
 	{
+
 		if (s[i] == '\'' || s[i] == '\"')
 			quoted = s[i] * !quoted;
 		if (s[i] == '$' && quoted != '\'')
 			out = expand_un_truc(s, out, &i);
+		else if (s[i] == '~' 
+			&&  (i > 0  && is_space(s[i - 1]))  
+			&& (!s[i + 1] || is_space(s[i + 1]) || s[i + 1] == '/'))
+			out = ft_strjoin(out, ft_get_env("HOME"));
 		else
-			out = s_append(out, s[i]) ;
+			out = s_append(out, s[i]);
 	}
 	return (out);
 }

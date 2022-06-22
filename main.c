@@ -57,6 +57,7 @@ char *ft_readline(char *prompt)
 	char	*t;
 	int 	ret;
 
+	ret = 0;
 	pipe(pipefd);
 	g_mini.pid = fork();
 	if (g_mini.pid)
@@ -87,10 +88,11 @@ void	ctrl_c(int sig)
 {
 	g_mini.sig = sig;
 	g_mini.ret = 130;
-	kill(g_mini.pid, 0);
+	kill(g_mini.pid, SIGTERM);
 	waitpid(g_mini.pid, NULL, 0);
 	g_mini.pid = 0;
 	write(1,"\n",1);
+
 	// rl_on_new_line();
 	// rl_replace_line("", 0);
 	// rl_redisplay();
@@ -107,8 +109,8 @@ void	ctrl_backslash(int sig)
 int	main(int ac, char **av, char **d_env)
 {
 	char	*s;
+	char 	*line;//keep non expanded in history
 	t_cmd	*cmds;
-
 	ac += 1;
 	av += 1;
 	signal(SIGQUIT, ctrl_backslash);
@@ -119,7 +121,6 @@ int	main(int ac, char **av, char **d_env)
 	while (!g_mini.exit)
 	{
 		s = ft_readline("\033[34;1;4mminishell$>\033[0m ");
-		g_mini.sig = 0;
 		if (!s)// <=> ctrl-D
 		{
 			g_mini.sig = SIGQUIT;
@@ -128,14 +129,15 @@ int	main(int ac, char **av, char **d_env)
 	 	}
 		if (s && *s && g_mini.sig != SIGINT && g_mini.sig != SIGQUIT)
 		{
-			s = expand(s);
-			if (!s)
+
+			line = expand(s);
+			if (!line)
 				continue ;
-			cmds = parse(s);
+			cmds = parse(line);
 			execute_cmds(cmds);
 			add_history(s);
 		}
-
+		g_mini.sig = 0;
 	}
 	g_clear("");
 	rl_clear_history();
