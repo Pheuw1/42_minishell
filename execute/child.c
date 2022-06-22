@@ -17,13 +17,7 @@ char *bin_path(char *cmd, char **env)
 	{
 		path = ft_strjoin(bins[i],cmd);	
 		if (!access(path, F_OK))
-		{
-			i = -1;
-			ft_freestrarr(bins);
-			free(cmd);
 			return (path);
-		}
-		free(path);
 	}
 	return (NULL);
 }
