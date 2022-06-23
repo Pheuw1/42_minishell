@@ -43,10 +43,11 @@ int	fork_program(t_cmd *cmd)
 		if (g_mini.fd_in > 0)
 			close(g_mini.fd_in);  
 		ret = exec_builtin(cmd->arg);
-		waitpid(pid, &ret, 0);
+		if (!is_builtin(cmd->arg))
+			waitpid(pid, &ret, 0);
+		g_mini.fd_in = pipefd[0];
 		// if (g_mini.sig == SIGINT)	
 		// 	return 130;
-		g_mini.fd_in = pipefd[0];
 	}
 	else 
 		child_process(cmd, pipefd);	

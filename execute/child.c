@@ -41,7 +41,7 @@ int		status_child(int status)
 	int	ret;
 
 	if (WIFEXITED(status))
-	ret = WEXITSTATUS(status);
+		ret = WEXITSTATUS(status);
 	if (WIFSIGNALED(status))
 	{
 		ret = WTERMSIG(status);
@@ -64,7 +64,7 @@ int     exec(t_cmd *cmd)
 	else
     	path = bin_path(cmd->arg[0], g_mini.env);
 	if (!path)
-		return (ft_error("access", cmd->arg[0], "couldn't find path to executable", -1));
+		return (ft_error("access", cmd->arg[0], "couldn't find path to executable", -2));
 	if (execve(path, cmd->arg, g_mini.env) == -1)
         return (ft_error("execve",NULL, "couldnt execute command", -1));
 	return (0);
@@ -73,7 +73,9 @@ int     exec(t_cmd *cmd)
 void	child_process(t_cmd *cmd, int *pipefd)
 {
 	int		in; //have to do in seperately to manage heredoc eof (exit(0), not just last cmd)
+	int		ret;
 
+	close(pipefd[0]);
 	if (!cmd->in && g_mini.fd_in > 0)
 		dup2(g_mini.fd_in , STDIN);//last out onto current in
 	in = open_in(cmd);
@@ -85,8 +87,10 @@ void	child_process(t_cmd *cmd, int *pipefd)
 		dup2(pipefd[1], STDOUT);
 	if (is_builtin(cmd->arg))
 		exit(0);
-	else if (exec(cmd))
-		exit(1);
-	close(pipefd[0]);
+	ret = exec(cmd);
 	g_clear("");
+	if (ret == -1)
+		exit(126);
+	if (ret == -2)
+		exit(127);
 }

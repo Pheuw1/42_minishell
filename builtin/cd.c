@@ -1,17 +1,10 @@
 #include "../minishell.h"
 
-
 void update_env_pwd(char **env)
 {
     char *args_pwd[3];
     char *args_oldpwd[3];
     char  PATH[PATH_MAX + 1];
-    int i;
-
-    i = -1;
-    while (env[++i])
-        if (!ft_strncmp("PWD", env[i], 3))
-            break ;
 
     getcwd(PATH, PATH_MAX);
     args_oldpwd[0] = "export";
@@ -56,15 +49,22 @@ int ft_cd(char **av)
     char *msg;
 
     if (ft_strarrsize(av) == 1)
-        driver_cd(get_val_env(g_mini.env, "HOME"));
+    {    
+        if (!get_val_env(g_mini.env, "HOME"))
+            return (ft_error("minishell : cd", 0, "HOME not set", 1));
+        return (driver_cd(get_val_env(g_mini.env, "HOME")));
+    }
     else if (ft_strarrsize(av) > 2)
         return (ft_error("minishell : cd", 0, "too many arguments", 1));
     else if (ft_strarrsize(av) == 2)
-    {   
+    {
         if (!ft_strcmp(av[1], "-"))
         {
             if (get_val_env(g_mini.env, "OLDPWD"))
-                driver_cd(get_val_env(g_mini.env, "OLDPWD"));
+            {
+                ft_printf("%s\n",get_val_env(g_mini.env, "OLDPWD"));
+                return (driver_cd(get_val_env(g_mini.env, "OLDPWD")));
+            }
             else
                 return (ft_error("minishell : cd", NULL, "OLDPWD not set", 1));
         }

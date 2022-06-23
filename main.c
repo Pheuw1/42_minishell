@@ -71,8 +71,8 @@ char *ft_readline(char *prompt)
 	}
 	else 
 	{
+		signal(SIGINT, SIG_IGN); 
 		close(pipefd[0]);
-		signal(SIGINT, SIG_DFL); 
 		t = readline(prompt);
 		if (!t)
 			exit(1);
@@ -99,7 +99,7 @@ void	ctrl_c(int sig)
 	kill(g_mini.pid, SIGTERM);
 	waitpid(g_mini.pid, NULL, 0);
 	g_mini.pid = 0;
-	write(1,"\n",1);
+	write(1,"^C\n",3);
 
 	// rl_on_new_line();
 	// rl_replace_line("", 0);

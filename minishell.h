@@ -103,6 +103,7 @@ int		execute_cmds(t_cmd *cmds);
 int		status_child(pid_t status);
 int     exec(t_cmd *cmd);
 void	child_process(t_cmd *cmd, int *pipefd);
+int		is_builtin(char **argv);
 
 //builtin
 int		ft_exit(char **av, int silent);

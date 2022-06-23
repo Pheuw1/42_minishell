@@ -51,14 +51,16 @@ char	*expand_un_truc(char *s, char *out, int *i)
 	int		j;
 
 	j = *i + 1;
-
-	
 	while (s[j] && !is_sep(s[j]) && !is_space(s[j])
-		&& s[j] != '$' && s[j] != '\'' && s[j] != '\"')
+		&& s[j] != '$' && s[j] != '\'' && s[j] != '\"'
+		&& (ft_isalnum(s[j]) || s[j] == '_'))
 		j++;
-	cur = ft_substr(s, *i + 1, j - *i - 1);
-	if (!ft_strncmp(cur, "?", 1))
+	cur = ft_substr(s, *i + 1, j - *i -1);
+	if (!(*cur) && s[j] == '?')
+	{
 		out = s_append_str(out, ft_itoa(g_mini.ret));
+		j++;
+	}
 	else if (!(*cur) && s[j] != '\'' && s[j] != '\"')
 		out = s_append(out, '$');
 	else
@@ -78,7 +80,6 @@ char	*expand(char *s)
 	i = -1;
 	while (s[++i])
 	{
-
 		if (s[i] == '\'' || s[i] == '\"')
 			quoted = s[i] * !quoted;
 		if (s[i] == '$' && quoted != '\'')
@@ -86,7 +87,7 @@ char	*expand(char *s)
 		else if (s[i] == '~' 
 			&&  (i > 0  && is_space(s[i - 1]))  
 			&& (!s[i + 1] || is_space(s[i + 1]) || s[i + 1] == '/'))
-			out = ft_strjoin(out, ft_get_env("HOME"));
+			out = s_append_str(out, ft_get_env("HOME"));
 		else
 			out = s_append(out, s[i]);
 	}
